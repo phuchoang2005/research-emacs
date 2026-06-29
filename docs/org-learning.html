@@ -1,0 +1,1590 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Org Mode — Learning Guide for this Emacs config</title>
+    <style>
+      :root {
+        --bg: #fbfaf9;
+        --panel: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #5c6066;
+        --line: #e4e0db;
+        --accent: #3548cf;
+        --accent-soft: #e7eaff;
+        --green: #1f7a3d;
+        --amber: #8a6d00;
+        --red: #a01726;
+        --code-bg: #f4f2ef;
+        --kbd-bg: #fff;
+        --kbd-line: #cfcac3;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.05);
+        --radius: 12px;
+        --mono: "Iosevka", "SF Mono", ui-monospace, Menlo, monospace;
+        --sans:
+          -apple-system, "SF Pro Text", Segoe UI, Roboto, Helvetica, Arial,
+          sans-serif;
+      }
+      [data-theme="dark"] {
+        --bg: #0f1115;
+        --panel: #161922;
+        --ink: #e6e7ea;
+        --muted: #9aa0ac;
+        --line: #2a2f3a;
+        --accent: #79a8ff;
+        --accent-soft: #1c2740;
+        --green: #6fd08c;
+        --amber: #e0c46b;
+        --red: #ff8b8b;
+        --code-bg: #1b1f29;
+        --kbd-bg: #222632;
+        --kbd-line: #3a4150;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      code,
+      kbd,
+      pre {
+        font-family: var(--mono);
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 264px 1fr;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      aside {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+        padding: 22px 16px;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: 0.2px;
+        margin: 4px 8px 4px;
+      }
+      .brand small {
+        display: block;
+        font-weight: 500;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 3px;
+      }
+      .progresswrap {
+        margin: 14px 8px 18px;
+      }
+      .progressbar {
+        height: 7px;
+        border-radius: 99px;
+        background: var(--line);
+        overflow: hidden;
+      }
+      .progressbar > div {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--accent), var(--green));
+        transition: width 0.4s;
+      }
+      .progresswrap span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      nav a {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 8px;
+        color: var(--ink);
+        font-size: 14.5px;
+        margin-bottom: 1px;
+      }
+      nav a:hover {
+        background: var(--accent-soft);
+        text-decoration: none;
+      }
+      nav a.active {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+      }
+      nav a .num {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        font-size: 12px;
+        width: 18px;
+        text-align: center;
+      }
+      nav a.active .num {
+        color: var(--accent);
+      }
+      .navsection {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: var(--muted);
+        margin: 16px 10px 6px;
+      }
+
+      /* Main */
+      main {
+        padding: 38px clamp(20px, 5vw, 72px);
+        max-width: 980px;
+      }
+      header.top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      h1 {
+        font-size: 30px;
+        margin: 0 0 4px;
+        letter-spacing: -0.3px;
+      }
+      .sub {
+        color: var(--muted);
+        margin: 0 0 18px;
+        font-size: 15px;
+      }
+      .toolbtns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      button.tb {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--ink);
+        padding: 7px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-family: var(--sans);
+      }
+      button.tb:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      section.doc {
+        display: none;
+        animation: fade 0.25s ease;
+      }
+      section.doc.show {
+        display: block;
+      }
+      @keyframes fade {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      h2 {
+        font-size: 23px;
+        margin: 30px 0 6px;
+        letter-spacing: -0.2px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 8px;
+      }
+      h3 {
+        font-size: 17.5px;
+        margin: 26px 0 8px;
+      }
+      p {
+        margin: 10px 0;
+      }
+      ul,
+      ol {
+        padding-left: 22px;
+      }
+      li {
+        margin: 5px 0;
+      }
+
+      .lead {
+        font-size: 17px;
+        color: var(--ink);
+        background: var(--accent-soft);
+        border-left: 3px solid var(--accent);
+        padding: 14px 18px;
+        border-radius: 0 10px 10px 0;
+        margin: 18px 0;
+      }
+
+      /* Cards */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin: 18px 0;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+      }
+      .card h4 {
+        margin: 0 0 6px;
+        font-size: 15px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13.5px;
+      }
+      .card .chip {
+        display: inline-block;
+        font-size: 11px;
+        color: var(--accent);
+        background: var(--accent-soft);
+        padding: 2px 8px;
+        border-radius: 99px;
+        margin-bottom: 8px;
+        font-family: var(--mono);
+      }
+
+      /* kbd */
+      kbd {
+        background: var(--kbd-bg);
+        border: 1px solid var(--kbd-line);
+        border-bottom-width: 2px;
+        border-radius: 6px;
+        padding: 1px 6px;
+        font-size: 12.5px;
+        white-space: nowrap;
+        color: var(--ink);
+      }
+
+      /* code blocks */
+      pre {
+        position: relative;
+        background: var(--code-bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 16px 16px;
+        overflow: auto;
+        font-size: 13.5px;
+        line-height: 1.55;
+        margin: 14px 0;
+      }
+      pre code {
+        display: block;
+        white-space: pre;
+      }
+      .copybtn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--muted);
+        border-radius: 6px;
+        font-size: 11px;
+        padding: 3px 8px;
+        cursor: pointer;
+        opacity: 0;
+        transition: 0.15s;
+      }
+      pre:hover .copybtn {
+        opacity: 1;
+      }
+      .copybtn.done {
+        color: var(--green);
+        border-color: var(--green);
+      }
+      .tok-c {
+        color: var(--muted);
+        font-style: italic;
+      } /* comment */
+      .tok-k {
+        color: var(--accent);
+      } /* keyword */
+      .tok-s {
+        color: var(--green);
+      } /* string */
+      .tok-m {
+        color: var(--amber);
+      } /* meta/markup */
+
+      /* tables */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 16px 0;
+        font-size: 14px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 9px 13px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        background: var(--code-bg);
+        font-weight: 600;
+        font-size: 12.5px;
+        letter-spacing: 0.2px;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      td code {
+        background: var(--code-bg);
+        padding: 1px 5px;
+        border-radius: 5px;
+        font-size: 13px;
+      }
+
+      /* callouts */
+      .note,
+      .warn,
+      .tip {
+        border-radius: 10px;
+        padding: 13px 16px;
+        margin: 16px 0;
+        font-size: 14.5px;
+        border: 1px solid;
+      }
+      .note {
+        background: var(--accent-soft);
+        border-color: transparent;
+      }
+      .warn {
+        background: color-mix(in srgb, var(--red) 10%, transparent);
+        border-color: color-mix(in srgb, var(--red) 30%, transparent);
+      }
+      .tip {
+        background: color-mix(in srgb, var(--green) 10%, transparent);
+        border-color: color-mix(in srgb, var(--green) 30%, transparent);
+      }
+      .note b,
+      .warn b,
+      .tip b {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 12.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .warn b {
+        color: var(--red);
+      }
+      .tip b {
+        color: var(--green);
+      }
+      .note b {
+        color: var(--accent);
+      }
+
+      /* steps / checklist */
+      .step {
+        display: flex;
+        gap: 14px;
+        margin: 14px 0;
+        align-items: flex-start;
+      }
+      .step .n {
+        flex: 0 0 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .step .body {
+        flex: 1;
+      }
+      .step .body h4 {
+        margin: 3px 0 4px;
+      }
+
+      .check {
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+        padding: 11px 14px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin: 8px 0;
+        background: var(--panel);
+        cursor: pointer;
+        transition: 0.15s;
+      }
+      .check:hover {
+        border-color: var(--accent);
+      }
+      .check input {
+        margin-top: 4px;
+        width: 17px;
+        height: 17px;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+      .check.done {
+        opacity: 0.55;
+      }
+      .check.done .ctext {
+        text-decoration: line-through;
+      }
+      .ctext b {
+        display: block;
+      }
+      .ctext span {
+        color: var(--muted);
+        font-size: 13.5px;
+      }
+
+      /* keymap filter */
+      .filterbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 16px 0;
+        flex-wrap: wrap;
+      }
+      .filterbar input {
+        flex: 1;
+        min-width: 200px;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--panel);
+        color: var(--ink);
+        font-size: 14px;
+      }
+      .filterbar input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .pill {
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--muted);
+        border-radius: 99px;
+        padding: 6px 13px;
+        font-size: 12.5px;
+        cursor: pointer;
+      }
+      .pill.on {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      tr.hide {
+        display: none;
+      }
+      mark {
+        background: color-mix(in srgb, var(--amber) 45%, transparent);
+        color: inherit;
+        border-radius: 3px;
+        padding: 0 2px;
+      }
+
+      /* flow diagram */
+      .flow {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 18px 0;
+        justify-content: center;
+      }
+      .flow .node {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .flow .node.done {
+        border-color: var(--green);
+        color: var(--green);
+      }
+      .flow .node.cancel {
+        border-color: var(--red);
+        color: var(--red);
+      }
+      .flow .arrow {
+        color: var(--muted);
+      }
+
+      details {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin: 10px 0;
+        background: var(--panel);
+        overflow: hidden;
+      }
+      summary {
+        cursor: pointer;
+        padding: 12px 16px;
+        font-weight: 600;
+        font-size: 14.5px;
+      }
+      summary::marker {
+        color: var(--accent);
+      }
+      details[open] summary {
+        border-bottom: 1px solid var(--line);
+      }
+      details .inner {
+        padding: 4px 16px 14px;
+      }
+
+      footer {
+        margin-top: 48px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .crumbs {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 28px;
+        gap: 12px;
+      }
+      .crumbs a {
+        flex: 1;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px 16px;
+        background: var(--panel);
+      }
+      .crumbs a:hover {
+        border-color: var(--accent);
+        text-decoration: none;
+      }
+      .crumbs a small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .crumbs a.next {
+        text-align: right;
+      }
+
+      @media (max-width: 860px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        aside {
+          position: static;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+        nav {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside>
+        <div class="brand">
+          Org Mode<small>learning guide · this Emacs config</small>
+        </div>
+        <div class="progresswrap">
+          <div class="progressbar"><div id="pbar"></div></div>
+          <span id="pcount">0 of 0 milestones done</span>
+        </div>
+        <div class="navsection">Foundations</div>
+        <nav id="nav"></nav>
+      </aside>
+
+      <main>
+        <header class="top">
+          <div>
+            <h1 id="ptitle">Org Mode</h1>
+            <p class="sub" id="psub"></p>
+          </div>
+          <div class="toolbtns">
+            <button class="tb" id="themebtn">🌗 Theme</button>
+            <button class="tb" id="resetbtn">↺ Reset progress</button>
+          </div>
+        </header>
+
+        <div id="content"></div>
+
+        <footer>
+          Generated for <code>~/.config/emacs</code> · Org core lives in
+          <code>lisp/research/init-org.el</code>. Cross-references:
+          <a href="org.md">org.md</a> · <a href="research.md">research.md</a> ·
+          <a href="jupyter.md">jupyter.md</a> ·
+          <a href="../KEYMAP/org.md">KEYMAP/org.md</a>. Progress is stored in
+          your browser only.
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      /* ============================================================= DATA ===== */
+      const K = (s) =>
+        s
+          .split(" ")
+          .map((x) => `<kbd>${x}</kbd>`)
+          .join(" ");
+
+      const PAGES = [
+        /* ---------------------------------------------------------------- 0 */
+        {
+          id: "start",
+          title: "Why Org here",
+          icon: "◆",
+          milestone: true,
+          sub: "What Org gives you in this configuration, and the mental model to hold.",
+          html: `
+      <div class="lead">
+        Org is the <b>hub</b> of this config's research layer. Plain-text files in
+        <code>~/org/</code> become a task manager, a journal, a literate notebook, a
+        Zettelkasten, and a citation-aware writing surface — all in one buffer format.
+        This guide teaches Org <em>as wired here</em>, not Org in the abstract.
+      </div>
+
+      <h3>The five demands this config places on Org</h3>
+      <div class="cards">
+        <div class="card"><span class="chip">init-org</span><h4>Plan &amp; capture</h4>
+          <p>Agenda + capture templates for tasks, notes and a datetree journal.</p></div>
+        <div class="card"><span class="chip">init-babel</span><h4>Run code</h4>
+          <p>Source blocks execute in place — Emacs Lisp, Python, shell, C.</p></div>
+        <div class="card"><span class="chip">init-notebook</span><h4>Jupyter</h4>
+          <p><code>jupyter</code> blocks drive real kernels with rich inline results.</p></div>
+        <div class="card"><span class="chip">init-roam</span><h4>Link knowledge</h4>
+          <p>org-roam Zettelkasten + dailies, citar bibliography, <code>C-c n …</code>.</p></div>
+        <div class="card"><span class="chip">init-pdf</span><h4>Read &amp; annotate</h4>
+          <p>org-noter ties a PDF to an Org notes file, side by side.</p></div>
+      </div>
+
+      <h3>The single mental model</h3>
+      <p>Everything in Org is an <b>outline of headings</b>. A heading can carry a
+      TODO state, a deadline, tags, properties, body text, links, and source blocks.
+      Folding, agenda, capture, roam and export are all just different <em>views</em>
+      over that one outline. Learn the outline first; the rest is leverage on top.</p>
+
+      <div class="note"><b>Where files live</b>
+        This config sets <code>org-directory</code> to <code>~/org/</code>, the inbox to
+        <code>~/org/inbox.org</code>, roam notes to <code>~/org/roam/</code>, dailies to
+        <code>~/org/roam/journal/</code>, and the bib library to
+        <code>~/org/bib/references.bib</code>. Create <code>~/org/</code> before you start.</div>
+
+      <h3>How to use this guide</h3>
+      <ul>
+        <li>Sections in the sidebar marked with a filled dot are <b>milestones</b> — finish their checklist to advance the progress bar.</li>
+        <li>Every keybinding shown is the one actually bound in this config. Hover any code block to copy it.</li>
+        <li>The <b>Keymap</b> page is a live, filterable cheat-sheet — keep it open in a second tab.</li>
+      </ul>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 1 */
+        {
+          id: "setup",
+          title: "First run",
+          icon: "▸",
+          milestone: true,
+          sub: "Create the directory, open your first file, confirm the styling loads.",
+          html: `
+      <h2>Get a working Org buffer</h2>
+      <div class="step"><div class="n">1</div><div class="body">
+        <h4>Create the Org tree</h4>
+        <p>Org won't error without it, but agenda and capture expect it. From a shell:</p>
+        ${pre(
+          "bash",
+          `mkdir -p ~/org/roam/journal ~/org/bib
+touch ~/org/inbox.org ~/org/journal.org`,
+        )}
+      </div></div>
+      <div class="step"><div class="n">2</div><div class="body">
+        <h4>Open a file and confirm the look</h4>
+        <p><kbd>C-x C-f</kbd> <code>~/org/inbox.org</code>. You should see indented
+        outline structure, bullet glyphs (org-superstar), and clean headings/blocks
+        (org-modern). If the file ends in <code>.org</code>, <code>org-mode</code> turns on automatically.</p>
+      </div></div>
+      <div class="step"><div class="n">3</div><div class="body">
+        <h4>Type the canonical starter buffer</h4>
+        ${pre(
+          "org",
+          `#+title: Inbox
+#+startup: content
+
+* Tasks
+** TODO Try the agenda
+* Notes
+** First note
+  Plain paragraph text lives under a heading.`,
+        )}
+        <p>Notice <code>#+startup: content</code> — this config also sets
+        <code>org-startup-folded 'content</code> globally, so files open showing
+        headings with bodies folded.</p>
+      </div></div>
+
+      <div class="tip"><b>Sanity check</b>
+        Put the cursor on a heading and press <kbd>TAB</kbd>. It should fold/unfold.
+        Press <kbd>S-TAB</kbd> anywhere to cycle the <em>whole</em> buffer between
+        folded → contents → everything. If that works, Org is healthy.</div>
+
+      <div class="note"><b>Emphasis markers are hidden</b>
+        This config sets <code>org-hide-emphasis-markers t</code>, so <code>*bold*</code>
+        and <code>/italic/</code> show as styled text without the markers. To edit them,
+        move point onto the word — the markers reappear, or toggle with
+        <kbd>M-x</kbd> <code>org-toggle-emphasis</code> if bound.</div>
+
+      <h3>Milestone checklist</h3>
+      <div data-checklist>
+        ${check("s1", "~/org/ exists", "You created the directory tree and inbox/journal files.")}
+        ${check("s2", "Opened a .org file", "org-mode activated and styling rendered.")}
+        ${check("s3", "TAB / S-TAB fold", "You can collapse and expand the outline.")}
+      </div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 2 */
+        {
+          id: "outline",
+          title: "Outline & structure",
+          icon: "▸",
+          milestone: true,
+          sub: "Headings, folding, motion, and reorganising a subtree — the core skill.",
+          html: `
+      <h2>The outline is everything</h2>
+      <p>A heading starts at column 0 with one or more <code>*</code>. Each extra star is
+      one level deeper. Body text, lists and blocks belong to the nearest heading above.</p>
+      ${pre(
+        "org",
+        `* Level 1 heading
+** Level 2 child
+*** Level 3 grandchild
+   body text belongs to the grandchild`,
+      )}
+
+      <h3>Structure editing (org-mode map)</h3>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>${K("TAB")}</td><td>Cycle visibility of the current subtree</td></tr>
+          <tr><td>${K("S-TAB")}</td><td>Cycle global visibility (folded → contents → all)</td></tr>
+          <tr><td>${K("M-RET")}</td><td>New heading / list item at the same level</td></tr>
+          <tr><td>${K("M-S-RET")}</td><td>New <b>TODO</b> heading</td></tr>
+          <tr><td>${K("M-←")} / ${K("M-→")}</td><td>Promote / demote the heading</td></tr>
+          <tr><td>${K("M-↑")} / ${K("M-↓")}</td><td>Move subtree up / down</td></tr>
+          <tr><td>${K("M-S-←")} / ${K("M-S-→")}</td><td>Promote / demote the whole subtree</td></tr>
+          <tr><td>${K("C-c C-n")} / ${K("C-c C-p")}</td><td>Next / previous heading</td></tr>
+          <tr><td>${K("C-c C-u")}</td><td>Up to parent heading</td></tr>
+          <tr><td>${K("C-c @")}</td><td>Select the current subtree</td></tr>
+        </tbody>
+      </table>
+
+      <div class="tip"><b>The one motion to internalise</b>
+        <kbd>M-RET</kbd> then <kbd>M-→</kbd> creates a child; <kbd>M-↑</kbd>/<kbd>M-↓</kbd>
+        reorders without cut-and-paste. Most outline editing is these three keys.</div>
+
+      <h3>Lists, checkboxes, tables</h3>
+      ${pre(
+        "org",
+        `- a plain bullet
+- [ ] a checkbox        (toggle with C-c C-c)
+- [X] a done checkbox
+1. an ordered item      (M-RET continues numbering)
+
+| Name | Score |     (press TAB inside to align;
+|------+-------|      C-c C-c on the header rule re-aligns)
+| Ann  |    42 |`,
+      )}
+      <p>On a checkbox or table cell, <kbd>C-c C-c</kbd> is the universal "act on
+      this context" key — toggle the box, recompute the table, refresh a block.</p>
+
+      <h3>Milestone checklist</h3>
+      <div data-checklist>
+        ${check("o1", "Build a 3-level outline", "Created nested headings with M-RET + M-→.")}
+        ${check("o2", "Reordered a subtree", "Moved a subtree with M-↑ / M-↓.")}
+        ${check("o3", "Toggled a checkbox", "Used C-c C-c on a [ ] item.")}
+      </div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 3 */
+        {
+          id: "todo",
+          title: "TODO workflow",
+          icon: "▸",
+          milestone: true,
+          sub: "This config's TODO sequence, logging, scheduling and deadlines.",
+          html: `
+      <h2>Tasks the way this config defines them</h2>
+      <p><code>init-org.el</code> sets a single workflow sequence. The letters in
+      parentheses are fast-select keys after <kbd>C-c C-t</kbd>.</p>
+      <div class="flow">
+        <span class="node">TODO <small>(t)</small></span><span class="arrow">→</span>
+        <span class="node">NEXT <small>(n)</small></span><span class="arrow">→</span>
+        <span class="node">WAIT <small>(w)</small></span><span class="arrow">→</span>
+        <span class="node done">DONE <small>(d)</small></span>
+        <span class="arrow">/</span>
+        <span class="node cancel">CANCELLED <small>(c)</small></span>
+      </div>
+      ${pre(
+        "lisp",
+        `;; lisp/research/init-org.el
+(org-todo-keywords
+ '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "|" "DONE(d)" "CANCELLED(c)")))
+(org-log-done 'time)        ;; stamp a CLOSED time when done
+(org-log-into-drawer t)     ;; keep log notes in a :LOGBOOK: drawer`,
+      )}
+      <p>The <code>|</code> separates "active" states from "finished" states — anything
+      right of it counts as closed and gets a CLOSED timestamp via <code>org-log-done</code>.</p>
+
+      <h3>Working with tasks</h3>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>${K("C-c C-t")}</td><td>Cycle / fast-select TODO state (then <kbd>t</kbd>/<kbd>n</kbd>/<kbd>w</kbd>/<kbd>d</kbd>/<kbd>c</kbd>)</td></tr>
+          <tr><td>${K("C-c C-s")}</td><td>Set <b>SCHEDULED</b> (when you'll start) — opens the calendar</td></tr>
+          <tr><td>${K("C-c C-d")}</td><td>Set <b>DEADLINE</b> (when it's due)</td></tr>
+          <tr><td>${K("C-c .")}</td><td>Insert a plain timestamp</td></tr>
+          <tr><td>${K("C-c C-q")}</td><td>Set tags on the heading</td></tr>
+          <tr><td>${K("S-→")} / ${K("S-←")}</td><td>Bump TODO state without the menu</td></tr>
+          <tr><td>${K("C-c ,")}</td><td>Set a priority (<code>[#A]</code>/<code>[#B]</code>/<code>[#C]</code>)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note"><b>SCHEDULED vs DEADLINE</b>
+        SCHEDULED = "don't show this in the agenda until this date / I plan to work on
+        it then." DEADLINE = "this is due; warn me as it approaches." Use deadlines
+        sparingly or the agenda cries wolf.</div>
+
+      <p>A fully specified task looks like:</p>
+      ${pre(
+        "org",
+        `** NEXT Draft the methods section                          :writing:
+   DEADLINE: <2026-07-05 Sun> SCHEDULED: <2026-07-01 Wed>
+   :PROPERTIES:
+   :EFFORT:  2h
+   :END:
+   :LOGBOOK:
+   - State "NEXT" from "TODO"  [2026-06-29 Mon]
+   :END:`,
+      )}
+
+      <h3>Milestone checklist</h3>
+      <div data-checklist>
+        ${check("t1", "Cycled a task to DONE", "Watched a CLOSED stamp appear via org-log-done.")}
+        ${check("t2", "Scheduled & set a deadline", "Used C-c C-s and C-c C-d.")}
+        ${check("t3", "Tagged a heading", "Added a tag with C-c C-q.")}
+      </div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 4 */
+        {
+          id: "capture",
+          title: "Capture & Agenda",
+          icon: "▸",
+          milestone: true,
+          sub: "The C-c c templates and the C-c a agenda — your daily loop.",
+          html: `
+      <h2>Capture: get it out of your head fast</h2>
+      <p>This config binds <kbd>C-c c</kbd> to <code>org-capture</code> with three
+      templates. Press the letter to choose one; the entry files itself automatically.</p>
+      <table>
+        <thead><tr><th>Key</th><th>Template</th><th>Where it lands</th></tr></thead>
+        <tbody>
+          <tr><td>${K("C-c c t")}</td><td><b>Task</b> — a TODO with timestamp + backlink</td><td><code>inbox.org</code> → <code>* Tasks</code></td></tr>
+          <tr><td>${K("C-c c n")}</td><td><b>Note</b> — a quick titled note</td><td><code>inbox.org</code> → <code>* Notes</code></td></tr>
+          <tr><td>${K("C-c c j")}</td><td><b>Journal</b> — dated entry in a datetree</td><td><code>journal.org</code> (Y/M/D tree)</td></tr>
+        </tbody>
+      </table>
+      ${pre(
+        "lisp",
+        `;; What the templates expand to (init-org.el):
+("t" "Task" entry (file+headline org-default-notes-file "Tasks")
+ "* TODO %?\\n  %U\\n  %a")        ;; %? cursor · %U inactive stamp · %a backlink
+("j" "Journal" entry (file+olp+datetree (...)/journal.org)
+ "* %?\\n  %U")`,
+      )}
+      <p>Inside a capture buffer: <kbd>C-c C-c</kbd> files it, <kbd>C-c C-k</kbd> aborts,
+      <kbd>C-c C-w</kbd> refiles it elsewhere. <code>%?</code> marks where the cursor
+      lands; <code>%a</code> drops a link back to wherever you were.</p>
+
+      <div class="tip"><b>The discipline that makes this work</b>
+        Capture is for <em>speed</em> — dump into <code>inbox.org</code>, don't organise.
+        Later, process the inbox: refile (<kbd>C-c C-w</kbd>) each item to its real home.
+        A trusted inbox beats a perfect-but-unused folder structure.</div>
+
+      <h2>Agenda: the unified view</h2>
+      <p><kbd>C-c a</kbd> opens the agenda dispatcher over <b>every file in
+      <code>~/org/</code></b> (<code>org-agenda-files</code> = the whole directory).
+      Common entry points from the dispatcher:</p>
+      <table>
+        <thead><tr><th>After C-c a</th><th>View</th></tr></thead>
+        <tbody>
+          <tr><td>${K("a")}</td><td>Weekly time-grid agenda (scheduled + deadlines)</td></tr>
+          <tr><td>${K("t")}</td><td>Global list of all TODO entries</td></tr>
+          <tr><td>${K("m")}</td><td>Match by tag / property</td></tr>
+          <tr><td>${K("n")}</td><td>Combined agenda + TODO list</td></tr>
+        </tbody>
+      </table>
+      <h3>Inside the agenda buffer</h3>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>${K("RET")} / ${K("TAB")}</td><td>Jump to the entry / peek at it</td></tr>
+          <tr><td>${K("t")}</td><td>Change the TODO state in place</td></tr>
+          <tr><td>${K("S-→")} / ${K("S-←")}</td><td>Reschedule by a day</td></tr>
+          <tr><td>${K("d")} / ${K("w")} / ${K("m")}</td><td>Day / week / month span</td></tr>
+          <tr><td>${K("r")} / ${K("g")}</td><td>Rebuild the view</td></tr>
+          <tr><td>${K("q")}</td><td>Quit</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>org-modern in the agenda</b>
+        This config hooks <code>org-modern-agenda</code> onto agenda finalisation, so the
+        agenda inherits the same clean styling as your buffers.</div>
+
+      <h3>Milestone checklist</h3>
+      <div data-checklist>
+        ${check("c1", "Captured a task", "C-c c t, typed it, filed with C-c C-c.")}
+        ${check("c2", "Captured a journal entry", "C-c c j landed in journal.org datetree.")}
+        ${check("c3", "Opened the weekly agenda", "C-c a a showed your scheduled items.")}
+        ${check("c4", "Rescheduled from the agenda", "Used S-→ on an item.")}
+      </div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 5 */
+        {
+          id: "links",
+          title: "Links & navigation",
+          icon: "▸",
+          milestone: false,
+          sub: "Store, insert, follow links — within files, to files, to anything.",
+          html: `
+      <h2>Links knit the outline together</h2>
+      <p>The pattern is two-step: <b>store</b> a link to where you are, then <b>insert</b>
+      it where you want to refer to it.</p>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>${K("C-c l")}</td><td><b>Store</b> a link to the current location (global; <code>org-store-link</code>)</td></tr>
+          <tr><td>${K("C-c C-l")}</td><td><b>Insert</b> a link — pick a stored one or type a target</td></tr>
+          <tr><td>${K("C-c C-o")}</td><td><b>Open</b> the link at point</td></tr>
+          <tr><td>${K("C-c &")}</td><td>Jump back after following a link</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>Two different <code>C-c l</code></b>
+        Globally <kbd>C-c l</kbd> is <code>org-store-link</code>. <em>Inside an eglot
+        (LSP) buffer</em> the same prefix is the LSP command prefix. They never collide
+        because they live in different major modes — but it's a known overlap in this
+        config worth remembering.</div>
+
+      <h3>Link anatomy</h3>
+      ${pre(
+        "org",
+        `[[https://orgmode.org][Org website]]          extern URL
+[[file:~/org/notes.org::*A heading][note]]   into another file + heading
+[[id:abc-123][a roam node]]                  stable id link (roam uses these)
+[[*A heading in this file]]                   internal heading
+<<a target>>  ... [[a target]]               custom anchor`,
+      )}
+      <p>Links display as the description with the target hidden; move point onto one
+      to edit the raw form, or use <kbd>C-c C-l</kbd> to edit it structurally.</p>
+      <div class="tip"><b>Beyond Org</b>
+        <code>org-store-link</code> works in many modes — a magit commit, a dired file,
+        an email. <kbd>C-c l</kbd> there, then <kbd>C-c C-l</kbd> in your notes, gives a
+        clickable backlink into the rest of Emacs.</div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 6 */
+        {
+          id: "babel",
+          title: "Literate code (Babel)",
+          icon: "▸",
+          milestone: true,
+          sub: "Execute Python / shell / C / Elisp source blocks in place.",
+          html: `
+      <h2>Org as a notebook</h2>
+      <p><code>init-babel.el</code> enables execution for <b>emacs-lisp, python, shell
+      and C</b>. A source block runs with <kbd>C-c C-c</kbd> and writes a
+      <code>#+RESULTS:</code> block beneath it.</p>
+      ${pre(
+        "org",
+        `#+begin_src python :results output
+print("hello from python3")
+#+end_src
+
+#+RESULTS:
+: hello from python3`,
+      )}
+      ${pre(
+        "lisp",
+        `;; init-babel.el — languages + trust policy
+(org-babel-do-load-languages 'org-babel-load-languages
+ '((emacs-lisp . t) (python . t) (shell . t) (C . t)))
+(setq org-babel-python-command "python3"        ;; not legacy python2
+      org-src-window-setup 'current-window)
+;; No confirmation prompt for these trusted languages:
+(setq org-confirm-babel-evaluate
+      (lambda (lang _) (not (member lang '("python" "shell" "emacs-lisp" "C")))))`,
+      )}
+
+      <h3>Block keys</h3>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>${K("C-c C-c")}</td><td>Execute the block at point</td></tr>
+          <tr><td>${K("C-c '")}</td><td>Edit the block in a dedicated language buffer</td></tr>
+          <tr><td>${K("C-c C-v t")}</td><td>Tangle — write blocks out to source files</td></tr>
+          <tr><td>${K("C-c C-v e")}</td><td>Execute then stay; <kbd>C-c C-v z</kbd> for a REPL session</td></tr>
+        </tbody>
+      </table>
+      <p>Because <code>org-src-window-setup</code> is <code>current-window</code>,
+      <kbd>C-c '</kbd> edits the block in the same window with full language support
+      (LSP, completion); <kbd>C-c '</kbd> again returns.</p>
+
+      <h3>Header arguments worth knowing</h3>
+      <table>
+        <thead><tr><th>Header</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>:results output</code></td><td>Capture stdout (vs <code>value</code>, the last expression)</td></tr>
+          <tr><td><code>:session foo</code></td><td>Persist state across blocks in one REPL</td></tr>
+          <tr><td><code>:var x=table</code></td><td>Pass an Org table / value into the block</td></tr>
+          <tr><td><code>:exports both</code></td><td>On export, keep code <em>and</em> results</td></tr>
+          <tr><td><code>:tangle file.py</code></td><td>This block tangles to <code>file.py</code></td></tr>
+        </tbody>
+      </table>
+      <div class="warn"><b>Trust</b>
+        Evaluation runs code on your machine. This config suppresses the prompt only for
+        the four languages above. Be deliberate before running <kbd>C-c C-c</kbd> in
+        documents you didn't write.</div>
+
+      <h3>Milestone checklist</h3>
+      <div data-checklist>
+        ${check("b1", "Ran a python block", "C-c C-c produced a #+RESULTS: block.")}
+        ${check("b2", "Edited a block with C-c " + "'", "Got language-native editing in its own buffer.")}
+        ${check("b3", "Used a :session", "State persisted across two blocks.")}
+      </div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 7 */
+        {
+          id: "jupyter",
+          title: "Jupyter kernels",
+          icon: "▹",
+          milestone: false,
+          sub: "Rich kernel-backed blocks via emacs-jupyter (init-notebook).",
+          html: `
+      <h2>From Babel to real kernels</h2>
+      <p><code>init-notebook.el</code> loads <code>emacs-jupyter</code>, adding a
+      <code>jupyter</code> Babel language. Where plain <code>python</code> blocks shell
+      out, <code>jupyter</code> blocks talk to a live Jupyter kernel — giving rich output
+      (plots, tables, HTML), inspection and completion.</p>
+      ${pre(
+        "org",
+        `#+begin_src jupyter-python :session py :async yes
+import numpy as np
+np.linspace(0, 1, 5)
+#+end_src`,
+      )}
+      <p>This config sets <code>jupyter-eval-use-overlays t</code>, so results appear as
+      inline overlays next to the code rather than only as text blocks.</p>
+      <div class="warn"><b>External requirements (lazy)</b>
+        Needs <code>python3</code> with the <code>jupyter</code> package and the ZeroMQ
+        (<code>zmq</code>) module, which builds on first use. Nothing is required to
+        <em>load</em> the config headless — only to run a kernel block.</div>
+      <div class="note">Full treatment: <a href="jupyter.md">docs/jupyter.md</a>. This page
+        is the bridge from Babel; the notebook layer deserves its own deep dive.</div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 8 */
+        {
+          id: "roam",
+          title: "Zettelkasten (roam)",
+          icon: "▹",
+          milestone: true,
+          sub: "org-roam notes, dailies and the C-c n keymap — the integrating layer.",
+          html: `
+      <h2>A networked note system</h2>
+      <p><code>init-roam.el</code> turns <code>~/org/roam/</code> into a Zettelkasten: many
+      small Org files ("nodes"), each with a stable id, linked densely. An autosynced
+      SQLite database tracks the links so you can find and traverse them.</p>
+      <table>
+        <thead><tr><th>Key</th><th>Command</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>${K("C-c n f")}</td><td><code>org-roam-node-find</code></td><td>Find / create a node by title</td></tr>
+          <tr><td>${K("C-c n i")}</td><td><code>org-roam-node-insert</code></td><td>Insert a link to a node (creates if new)</td></tr>
+          <tr><td>${K("C-c n c")}</td><td><code>org-roam-capture</code></td><td>Capture a new node</td></tr>
+          <tr><td>${K("C-c n b")}</td><td><code>org-roam-buffer-toggle</code></td><td>Show backlinks to the current node</td></tr>
+          <tr><td>${K("C-c n j")}</td><td><code>...dailies-capture-today</code></td><td>Append to today's journal node</td></tr>
+          <tr><td>${K("C-c n t")}</td><td><code>...dailies-goto-today</code></td><td>Open today's daily file</td></tr>
+        </tbody>
+      </table>
+      ${pre(
+        "lisp",
+        `;; init-roam.el — node + daily templates
+(org-roam-directory "~/org/roam/")
+(org-roam-dailies-directory "journal/")
+(org-roam-completion-everywhere t)   ;; complete node links mid-sentence
+;; new node:  %<...>-\${slug}.org with "#+title: \${title}"
+;; daily:     %<%Y-%m-%d>.org`,
+      )}
+      <div class="tip"><b>The workflow</b>
+        Writing prose and want to reference an idea? Type its name, hit
+        <kbd>C-c n i</kbd> — if the node exists you link it, if not you create it on the
+        spot. Over time <kbd>C-c n b</kbd> (backlinks) reveals connections you didn't plan.</div>
+
+      <h3>Bibliography (citar)</h3>
+      <p>citar reads <code>~/org/bib/references.bib</code> and is wired as the
+      <code>org-cite</code> processor, so citations are first-class:</p>
+      <table>
+        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>${K("C-c n r")}</td><td><code>citar-insert-citation</code> — insert <code>[cite:@key]</code></td></tr>
+          <tr><td>${K("C-c n o")}</td><td><code>citar-open</code> — open the entry's PDF / note / URL</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>Why "integrating layer"</b>
+        Roam notes are Org files, so they can run Babel blocks, cite the shared
+        <code>.bib</code> (which also feeds LaTeX export), and anchor reading notes to
+        PDFs via org-noter. One environment, not four tools. See
+        <a href="research.md">research.md</a>.</div>
+
+      <h3>Milestone checklist</h3>
+      <div data-checklist>
+        ${check("r1", "Created a roam node", "C-c n f for a new title, wrote a sentence.")}
+        ${check("r2", "Linked two nodes", "C-c n i from one node into another.")}
+        ${check("r3", "Viewed backlinks", "C-c n b showed what links here.")}
+        ${check("r4", "Wrote a daily", "C-c n j added to today.")}
+      </div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 9 */
+        {
+          id: "pdf",
+          title: "Reading & export",
+          icon: "▹",
+          milestone: false,
+          sub: "org-noter for annotated reading; export to HTML / LaTeX / Markdown.",
+          html: `
+      <h2>Annotated reading with org-noter</h2>
+      <p><code>init-pdf.el</code> renders PDFs natively (pdf-tools) and ties one to an Org
+      notes file with <code>org-noter</code>: the PDF and your notes scroll side by side,
+      each note anchored to a page/location.</p>
+      <ul>
+        <li><kbd>M-x</kbd> <code>org-noter</code> from either an Org notes buffer or an open PDF starts a session.</li>
+        <li>Notes search path is <code>~/org/</code>, so noter finds your existing notes.</li>
+        <li>Pair this with citar (<kbd>C-c n o</kbd>) to jump from a citation straight to its PDF.</li>
+      </ul>
+      <div class="note">Full PDF workflow: <a href="pdf.md">docs/pdf.md</a>.</div>
+
+      <h2>Export</h2>
+      <p>Org's export dispatcher is <kbd>C-c C-e</kbd>. Pick a backend, then a format:</p>
+      <table>
+        <thead><tr><th>After C-c C-e</th><th>Produces</th></tr></thead>
+        <tbody>
+          <tr><td>${K("h o")}</td><td>HTML, and open it in the browser</td></tr>
+          <tr><td>${K("l p")}</td><td>LaTeX → PDF (uses the LaTeX layer — see <a href="latex.md">latex.md</a>)</td></tr>
+          <tr><td>${K("l l")}</td><td>LaTeX source only</td></tr>
+          <tr><td>${K("m m")}</td><td>Markdown (needs nothing extra; pandoc for round-trips)</td></tr>
+        </tbody>
+      </table>
+      ${pre(
+        "org",
+        `#+title: My report
+#+author: You
+#+options: toc:t num:t
+#+latex_class: article          # honoured by the C-c C-e l p export`,
+      )}
+      <div class="tip"><b>Babel + export together</b>
+        With <code>:exports both</code> on your source blocks, <kbd>C-c C-e</kbd> produces
+        a document containing the code <em>and</em> its freshly-computed results — a true
+        literate, reproducible report straight out of one Org file.</div>
+    `,
+        },
+
+        /* ---------------------------------------------------------------- 10 */
+        {
+          id: "keymap",
+          title: "Keymap cheat-sheet",
+          icon: "⌘",
+          milestone: false,
+          sub: "Every binding from this config in one filterable table.",
+          html: `
+      <h2>Live cheat-sheet</h2>
+      <p>Type to filter by key, command or description. Click a category to narrow.</p>
+      <div class="filterbar">
+        <input id="kfilter" placeholder="Filter… e.g. 'agenda', 'C-c n', 'schedule'">
+      </div>
+      <div class="filterbar" id="kpills"></div>
+      <table id="ktable">
+        <thead><tr><th>Key</th><th>Command / action</th><th>Context</th></tr></thead>
+        <tbody id="kbody"></tbody>
+      </table>
+      <p class="sub" id="kcount"></p>
+    `,
+        },
+      ];
+
+      const KEYMAP = [
+        // cat, key, desc, context
+        [
+          "Global",
+          "C-c a",
+          "org-agenda — open the agenda dispatcher",
+          "init-org",
+        ],
+        ["Global", "C-c c", "org-capture — task / note / journal", "init-org"],
+        ["Global", "C-c l", "org-store-link", "init-org"],
+        ["Capture", "C-c c t", "Capture a Task → inbox.org", "init-org"],
+        ["Capture", "C-c c n", "Capture a Note → inbox.org", "init-org"],
+        [
+          "Capture",
+          "C-c c j",
+          "Capture a Journal entry → journal.org datetree",
+          "init-org",
+        ],
+        ["Capture", "C-c C-c", "File the capture", "org-capture"],
+        ["Capture", "C-c C-k", "Abort the capture", "org-capture"],
+        ["Capture", "C-c C-w", "Refile the entry", "org"],
+        ["Outline", "TAB", "Cycle subtree visibility", "org-mode"],
+        ["Outline", "S-TAB", "Cycle global visibility", "org-mode"],
+        ["Outline", "M-RET", "New heading / list item", "org-mode"],
+        ["Outline", "M-S-RET", "New TODO heading", "org-mode"],
+        ["Outline", "M-LEFT / M-RIGHT", "Promote / demote heading", "org-mode"],
+        ["Outline", "M-UP / M-DOWN", "Move subtree up / down", "org-mode"],
+        ["Outline", "C-c C-n / C-c C-p", "Next / previous heading", "org-mode"],
+        ["Outline", "C-c C-u", "Up to parent heading", "org-mode"],
+        ["Outline", "C-c @", "Select subtree", "org-mode"],
+        ["Tasks", "C-c C-t", "Cycle / fast-select TODO state", "org-mode"],
+        ["Tasks", "C-c C-s", "Set SCHEDULED", "org-mode"],
+        ["Tasks", "C-c C-d", "Set DEADLINE", "org-mode"],
+        ["Tasks", "C-c .", "Insert timestamp", "org-mode"],
+        ["Tasks", "C-c C-q", "Set tags", "org-mode"],
+        ["Tasks", "C-c ,", "Set priority", "org-mode"],
+        ["Tasks", "S-RIGHT / S-LEFT", "Bump TODO state", "org-mode"],
+        ["Links", "C-c C-l", "Insert / edit link", "org-mode"],
+        ["Links", "C-c C-o", "Open link at point", "org-mode"],
+        ["Links", "C-c &", "Jump back after following", "org-mode"],
+        ["Tables", "C-c C-c", "Re-align table / act on context", "org-mode"],
+        ["Babel", "C-c C-c", "Execute source block", "init-babel"],
+        [
+          "Babel",
+          "C-c '",
+          "Edit source block in language buffer",
+          "init-babel",
+        ],
+        ["Babel", "C-c C-v t", "Tangle blocks to files", "org"],
+        ["Babel", "C-c C-v z", "Open a REPL session for the block", "org"],
+        ["Export", "C-c C-e", "Export dispatcher", "org"],
+        ["Export", "C-c C-e h o", "Export HTML and open", "org"],
+        ["Export", "C-c C-e l p", "Export to PDF via LaTeX", "init-latex"],
+        ["Export", "C-c C-e m m", "Export to Markdown", "org"],
+        ["Roam", "C-c n f", "org-roam-node-find", "init-roam"],
+        ["Roam", "C-c n i", "org-roam-node-insert", "init-roam"],
+        ["Roam", "C-c n c", "org-roam-capture", "init-roam"],
+        ["Roam", "C-c n b", "org-roam-buffer-toggle (backlinks)", "init-roam"],
+        ["Roam", "C-c n j", "org-roam-dailies-capture-today", "init-roam"],
+        ["Roam", "C-c n t", "org-roam-dailies-goto-today", "init-roam"],
+        ["Citations", "C-c n r", "citar-insert-citation", "init-roam"],
+        ["Citations", "C-c n o", "citar-open (PDF / note / URL)", "init-roam"],
+        ["PDF", "M-x org-noter", "Start a noter session", "init-pdf"],
+        ["Agenda", "a", "Weekly agenda (in dispatcher)", "org-agenda"],
+        ["Agenda", "t", "Global TODO list (in dispatcher)", "org-agenda"],
+        ["Agenda", "S-RIGHT / S-LEFT", "Reschedule by a day", "org-agenda"],
+        ["Agenda", "r / g", "Rebuild view", "org-agenda"],
+        ["Agenda", "q", "Quit agenda", "org-agenda"],
+      ];
+
+      /* ============================================================ HELPERS === */
+      function esc(s) {
+        return s
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+      function highlight(code, lang) {
+        let h = esc(code);
+        if (lang === "lisp") {
+          h = h
+            .replace(/(;;[^\n]*)/g, '<span class="tok-c">$1</span>')
+            .replace(/(&quot;[^&]*?&quot;)/g, '<span class="tok-s">$1</span>')
+            .replace(
+              /\b(use-package|setq|lambda|defun|require|provide|expand-file-name|list|not|member|append)\b/g,
+              '<span class="tok-k">$1</span>',
+            );
+        } else if (lang === "org") {
+          h = h
+            .replace(/(#\+[a-z_]+:?)/gi, '<span class="tok-m">$1</span>')
+            .replace(/(^\*+ .*$)/gm, '<span class="tok-k">$1</span>')
+            .replace(/(:[A-Z_]+:)/g, '<span class="tok-m">$1</span>')
+            .replace(/(#\s.*$)/gm, '<span class="tok-c">$1</span>');
+        } else if (lang === "bash") {
+          h = h
+            .replace(/(#[^\n]*)/g, '<span class="tok-c">$1</span>')
+            .replace(
+              /\b(mkdir|touch|cd|emacs)\b/g,
+              '<span class="tok-k">$1</span>',
+            );
+        }
+        return h;
+      }
+      function pre(lang, code) {
+        return `<pre><button class="copybtn" data-code="${encodeURIComponent(code)}">Copy</button><code>${highlight(code, lang)}</code></pre>`;
+      }
+      function check(id, title, desc) {
+        return `<label class="check" data-id="${id}">
+    <input type="checkbox">
+    <span class="ctext"><b>${title}</b><span>${desc}</span></span></label>`;
+      }
+
+      /* ============================================================ RENDER ==== */
+      const nav = document.getElementById("nav");
+      PAGES.forEach((p, i) => {
+        const a = document.createElement("a");
+        a.href = "#" + p.id;
+        a.dataset.id = p.id;
+        a.innerHTML = `<span class="num">${p.milestone ? "●" : "○"}</span><span>${p.title}</span>`;
+        nav.appendChild(a);
+      });
+
+      const content = document.getElementById("content");
+      function renderPage(id) {
+        const p = PAGES.find((x) => x.id === id) || PAGES[0];
+        document.getElementById("ptitle").textContent = p.title;
+        document.getElementById("psub").textContent = p.sub;
+        // crumbs
+        const idx = PAGES.indexOf(p);
+        const prev = PAGES[idx - 1],
+          next = PAGES[idx + 1];
+        let crumbs = '<div class="crumbs">';
+        crumbs += prev
+          ? `<a href="#${prev.id}"><small>← Previous</small>${prev.title}</a>`
+          : "<span></span>";
+        crumbs += next
+          ? `<a class="next" href="#${next.id}"><small>Next →</small>${next.title}</a>`
+          : "<span></span>";
+        crumbs += "</div>";
+        content.innerHTML = `<section class="doc show">${p.html}${crumbs}</section>`;
+        document
+          .querySelectorAll("#nav a")
+          .forEach((a) => a.classList.toggle("active", a.dataset.id === id));
+        wireCopy();
+        wireChecks();
+        if (id === "keymap") buildKeymap();
+        window.scrollTo(0, 0);
+      }
+
+      function wireCopy() {
+        document.querySelectorAll(".copybtn").forEach((b) => {
+          b.onclick = () => {
+            navigator.clipboard.writeText(decodeURIComponent(b.dataset.code));
+            b.textContent = "Copied ✓";
+            b.classList.add("done");
+            setTimeout(() => {
+              b.textContent = "Copy";
+              b.classList.remove("done");
+            }, 1200);
+          };
+        });
+      }
+
+      /* ---- progress / checklist persistence ---- */
+      const STORE = "org-guide-progress";
+      function getState() {
+        try {
+          return JSON.parse(localStorage.getItem(STORE)) || {};
+        } catch (e) {
+          return {};
+        }
+      }
+      function setState(s) {
+        localStorage.setItem(STORE, JSON.stringify(s));
+      }
+      function wireChecks() {
+        const st = getState();
+        document.querySelectorAll(".check").forEach((c) => {
+          const id = c.dataset.id,
+            box = c.querySelector("input");
+          box.checked = !!st[id];
+          c.classList.toggle("done", box.checked);
+          box.onchange = () => {
+            const s = getState();
+            s[id] = box.checked;
+            setState(s);
+            c.classList.toggle("done", box.checked);
+            updateProgress();
+          };
+        });
+        updateProgress();
+      }
+      function allCheckIds() {
+        // milestone pages each have a data-checklist; gather their check ids from HTML
+        const ids = [];
+        PAGES.filter((p) => p.milestone).forEach((p) => {
+          const m = p.html.match(/data-id="([^"]+)"/g) || [];
+          m.forEach((x) => ids.push(x.match(/"([^"]+)"/)[1]));
+        });
+        return ids;
+      }
+      function updateProgress() {
+        const st = getState(),
+          ids = allCheckIds();
+        const done = ids.filter((i) => st[i]).length;
+        const pct = ids.length ? Math.round((done / ids.length) * 100) : 0;
+        document.getElementById("pbar").style.width = pct + "%";
+        document.getElementById("pcount").textContent =
+          `${done} of ${ids.length} milestones done (${pct}%)`;
+      }
+
+      /* ---- keymap page ---- */
+      function buildKeymap() {
+        const cats = [...new Set(KEYMAP.map((r) => r[0]))];
+        const pills = document.getElementById("kpills");
+        pills.innerHTML =
+          '<span class="pill on" data-cat="all">All</span>' +
+          cats
+            .map((c) => `<span class="pill" data-cat="${c}">${c}</span>`)
+            .join("");
+        const body = document.getElementById("kbody");
+        body.innerHTML = KEYMAP.map((r) => {
+          const keys = r[1]
+            .split(" / ")
+            .map((k) =>
+              k
+                .split(" ")
+                .map((x) => `<kbd>${x}</kbd>`)
+                .join(" "),
+            )
+            .join(" / ");
+          return `<tr data-cat="${r[0]}" data-text="${(r[1] + " " + r[2] + " " + r[3]).toLowerCase()}">
+      <td>${keys}</td><td>${r[2]}</td><td><code>${r[3]}</code></td></tr>`;
+        }).join("");
+        const input = document.getElementById("kfilter");
+        let cat = "all";
+        function apply() {
+          const q = input.value.toLowerCase().trim();
+          let shown = 0;
+          body.querySelectorAll("tr").forEach((tr) => {
+            const okCat = cat === "all" || tr.dataset.cat === cat;
+            const okQ = !q || tr.dataset.text.includes(q);
+            const vis = okCat && okQ;
+            tr.classList.toggle("hide", !vis);
+            // highlight
+            tr.querySelectorAll("td")[1].innerHTML =
+              tr.querySelectorAll("td")[1].textContent;
+            if (vis && q) {
+              const cell = tr.querySelectorAll("td")[1];
+              const re = new RegExp(
+                "(" + q.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&") + ")",
+                "ig",
+              );
+              cell.innerHTML = cell.textContent.replace(re, "<mark>$1</mark>");
+            }
+            if (vis) shown++;
+          });
+          document.getElementById("kcount").textContent =
+            `${shown} of ${KEYMAP.length} bindings shown`;
+        }
+        input.oninput = apply;
+        pills.querySelectorAll(".pill").forEach(
+          (p) =>
+            (p.onclick = () => {
+              pills
+                .querySelectorAll(".pill")
+                .forEach((x) => x.classList.remove("on"));
+              p.classList.add("on");
+              cat = p.dataset.cat;
+              apply();
+            }),
+        );
+        apply();
+      }
+
+      /* ---- routing ---- */
+      function route() {
+        const id = location.hash.replace("#", "") || PAGES[0].id;
+        renderPage(id);
+      }
+      window.addEventListener("hashchange", route);
+
+      /* ---- theme ---- */
+      const themeKey = "org-guide-theme";
+      function applyTheme(t) {
+        document.documentElement.dataset.theme = t;
+        localStorage.setItem(themeKey, t);
+      }
+      applyTheme(
+        localStorage.getItem(themeKey) ||
+          (matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"),
+      );
+      document.getElementById("themebtn").onclick = () => {
+        applyTheme(
+          document.documentElement.dataset.theme === "dark" ? "light" : "dark",
+        );
+      };
+      document.getElementById("resetbtn").onclick = () => {
+        if (confirm("Clear all milestone progress?")) {
+          localStorage.removeItem(STORE);
+          route();
+        }
+      };
+
+      route();
+    </script>
+  </body>
+</html>

@@ -8,6 +8,15 @@
 ;; loading this module headless is safe.
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
+  :hook
+  ;; `global-display-line-numbers-mode' (and `global-hl-line-mode') are enabled
+  ;; in init-core/init-ui; both choke on pdf-view buffers and signal
+  ;; "Wrong type argument: markerp, nil" from the epdfinfo process filter, so
+  ;; turn them off locally for PDFs.
+  (pdf-view-mode . (lambda ()
+                     (display-line-numbers-mode -1)
+                     (when (bound-and-true-p hl-line-mode)
+                       (hl-line-mode -1))))
   :config
   (pdf-loader-install :no-query)
   :custom
