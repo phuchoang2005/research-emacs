@@ -1,0 +1,40 @@
+# --- Package manager (straight.el) ---------------------------------------
+# Cloned repos + build artifacts are reproducible from the use-package decls.
+/straight/
+/.cache/
+
+# --- Byte / native compilation -------------------------------------------
+*.elc
+/eln-cache/
+/transient/
+
+# --- Backups, autosaves, lockfiles ---------------------------------------
+/backup/
+/auto-save-list/
+*~
+\#*\#
+.\#*
+
+# --- Persistent state written at runtime ---------------------------------
+/history
+/places
+/recentf
+/bookmarks
+/savehist
+/org-roam.db
+/network-security.data
+/projectile.cache
+/tramp
+/.org-id-locations
+/url/
+/request/
+/var/
+/.lsp-session-*
+
+# --- Legacy / editor cruft -----------------------------------------------
+/.emacs.d/
+.DS_Store
+
+# --- Kept on purpose ------------------------------------------------------
+# snippets/ is tracked (personal yasnippet templates).
+!/snippets/
